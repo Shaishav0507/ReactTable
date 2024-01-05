@@ -1,8 +1,8 @@
 // Home.js
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import DataTable from './DataTable'; // Replace with your DataTable component
+import { DataGrid } from '@mui/x-data-grid';
+import { Link as RouterLink } from 'react-router-dom';
 
 const data = [
   { id: 1, name: 'Item 1', description: 'Description 1', price: '$10' },
@@ -11,23 +11,40 @@ const data = [
 ];
 
 const columns = [
-  { Header: 'ID', accessor: 'id' },
-  { Header: 'Name', accessor: 'name' },
+  { field: 'id', headerName: 'ID', width: 100 },
+  { field: 'name', headerName: 'Name', width: 200 },
   {
-    Header: 'Description',
-    accessor: 'description',
-    Cell: ({ row }) => (
-      <Link to={`/details/${row.original.description}`}>{row.original.description}</Link>
-    ),
+    field: 'description',
+    headerName: 'Description',
+    width: 250,
+    renderCell: (params) => {
+      const handleDescriptionClick = (event) => {
+        const description = params.row.description;
+        window.location.href = `/details/${description}`;
+      };
+
+      return (
+        <div>
+          <RouterLink
+            to={`/details/${params.row.description}`}
+            component="button"
+            onClick={handleDescriptionClick}
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+          >
+            {params.value}
+          </RouterLink>
+        </div>
+      );
+    },
   },
-  { Header: 'Price', accessor: 'price' },
+  { field: 'price', headerName: 'Price', width: 150 },
 ];
 
 const Home = () => {
   return (
-    <div>
+    <div style={{ height: 400, width: '100%' }}>
       <h1>Home</h1>
-      <DataTable data={data} columns={columns} />
+      <DataGrid rows={data} columns={columns} pageSize={5} />
     </div>
   );
 };
